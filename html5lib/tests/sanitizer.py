@@ -13,14 +13,16 @@ class SanitizerFile(pytest.File):
         with codecs.open(str(self.fspath), "r", encoding="utf-8") as fp:
             tests = json.load(fp)
         for i, test in enumerate(tests):
-            yield SanitizerTest(str(i), self, test=test)
+            yield SanitizerTest.from_parent(self, name=str(i), test=test)
 
 
 class SanitizerTest(pytest.Item):
-    def __init__(self, name, parent, test):
-        super(SanitizerTest, self).__init__(name, parent)
-        self.obj = lambda: 1  # this is to hack around skipif needing a function!
-        self.test = test
+    @classmethod
+    def from_parent(cls, parent, *, name, test):
+        node = super().from_parent(parent, name=name)
+        node.obj = lambda: 1  # this is to hack around skipif needing a function!
+        node.test = test
+        return node
 
     def runtest(self):
         input = self.test["input"]
