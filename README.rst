@@ -1,8 +1,9 @@
 html5lib
 ========
 
-.. image:: https://travis-ci.org/html5lib/html5lib-python.svg?branch=master
-    :target: https://travis-ci.org/html5lib/html5lib-python
+.. image:: https://github.com/twm/html5iter/workflows/CI/badge.svg?branch=master
+     :target: https://github.com/twm/html5iter/actions?workflow=CI
+     :alt: CI Status
 
 
 html5lib is a pure-python library for parsing HTML. It is designed to
