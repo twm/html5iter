@@ -1,6 +1,3 @@
-from __future__ import absolute_import, division, unicode_literals
-from six import text_type
-
 import re
 
 from codecs import register_error, xmlcharrefreplace_errors
@@ -222,14 +219,14 @@ class HTMLSerializer(object):
         self.strict = False
 
     def encode(self, string):
-        assert(isinstance(string, text_type))
+        assert isinstance(string, str)
         if self.encoding:
             return string.encode(self.encoding, "htmlentityreplace")
         else:
             return string
 
     def encodeStrict(self, string):
-        assert(isinstance(string, text_type))
+        assert isinstance(string, str)
         if self.encoding:
             return string.encode(self.encoding, "strict")
         else:

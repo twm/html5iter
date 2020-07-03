@@ -8,8 +8,8 @@ from io import BytesIO, StringIO
 
 import pytest
 
-import six
-from six.moves import http_client, urllib
+import http.client as http_client
+import urllib
 
 from html5lib._inputstream import (BufferedStream, HTMLInputStream,
                                    HTMLUnicodeInputStream, HTMLBinaryInputStream)
@@ -202,9 +202,6 @@ def test_python_issue_20007_b():
     Make sure we have a work-around for Python bug #20007
     http://bugs.python.org/issue20007
     """
-    if six.PY2:
-        return
-
     class FakeSocket(object):
         def makefile(self, _mode, _bufsize=None):
             # pylint:disable=unused-argument
