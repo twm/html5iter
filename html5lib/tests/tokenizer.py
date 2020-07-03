@@ -189,36 +189,43 @@ class TokenizerFile(pytest.File):
             tests = json.load(fp)
         if 'tests' in tests:
             for i, test in enumerate(tests['tests']):
-                yield TokenizerTestCollector(str(i), self, testdata=test)
+                yield TokenizerTestCollector.from_parent(self, name=str(i), testdata=test)
 
 
 class TokenizerTestCollector(pytest.Collector):
-    def __init__(self, name, parent=None, config=None, session=None, testdata=None):
-        super(TokenizerTestCollector, self).__init__(name, parent, config, session)
+    @classmethod
+    def from_parent(cls, parent, *, name, testdata):
         if 'initialStates' not in testdata:
             testdata["initialStates"] = ["Data state"]
         if 'doubleEscaped' in testdata:
             testdata = unescape(testdata)
-        self.testdata = testdata
+
+        node = super().from_parent(parent, name=name)
+        node.testdata = testdata
+        return node
 
     def collect(self):
         for initialState in self.testdata["initialStates"]:
             initialState = capitalize(initialState)
-            item = TokenizerTest(initialState,
-                                 self,
-                                 self.testdata,
-                                 initialState)
+            item = TokenizerTest.from_parent(
+                self,
+                name=initialState,
+                test=self.testdata,
+                initialState=initialState,
+            )
             if self.testdata["input"] is None:
                 item.add_marker(pytest.mark.skipif(True, reason="Relies on lone surrogates"))
             yield item
 
 
 class TokenizerTest(pytest.Item):
-    def __init__(self, name, parent, test, initialState):
-        super(TokenizerTest, self).__init__(name, parent)
-        self.obj = lambda: 1  # this is to hack around skipif needing a function!
-        self.test = test
-        self.initialState = initialState
+    @classmethod
+    def from_parent(cls, parent, *, name, test, initialState):
+        node = super().from_parent(parent, name=name)
+        node.obj = lambda: 1  # this is to hack around skipif needing a function!
+        node.test = test
+        node.initialState = initialState
+        return node
 
     def runtest(self):
         warnings.resetwarnings()
