@@ -31,8 +31,6 @@ implement several things:
 
 from __future__ import absolute_import, division, unicode_literals
 
-from .._utils import default_etree
-
 treeBuilderCache = {}
 
 
@@ -78,7 +76,7 @@ def getTreeBuilder(treeType, implementation=None, **kwargs):
         elif treeType == "etree":
             from . import etree
             if implementation is None:
-                implementation = default_etree
+                from xml.etree import ElementTree as implementation
             # NEVER cache here, caching is done in the etree submodule
             return etree.getETreeModule(implementation, **kwargs).TreeBuilder
         else:

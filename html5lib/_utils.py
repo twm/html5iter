@@ -1,9 +1,8 @@
 from types import ModuleType
 from collections.abc import Mapping
-import xml.etree.ElementTree as default_etree
 
 
-__all__ = ["default_etree", "MethodDispatcher", "isSurrogatePair",
+__all__ = ["MethodDispatcher", "isSurrogatePair",
            "surrogatePairToCodepoint", "moduleFactoryFactory",
            "supports_lone_surrogates"]
 
