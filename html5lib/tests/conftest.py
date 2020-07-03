@@ -74,17 +74,6 @@ def pytest_configure(config):
                                 if not installed:
                                     msgs.append("Need %s" % spec)
 
-        # Check cElementTree
-        import xml.etree.ElementTree as ElementTree
-
-        try:
-            import xml.etree.cElementTree as cElementTree
-        except ImportError:
-            msgs.append("cElementTree unable to be imported")
-        else:
-            if cElementTree.Element is ElementTree.Element:
-                msgs.append("cElementTree is just an alias for ElementTree")
-
     if msgs:
         pytest.exit("\n".join(msgs))
 

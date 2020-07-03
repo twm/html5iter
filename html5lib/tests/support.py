@@ -37,20 +37,6 @@ treeTypes['ElementTree'] = {
 }
 
 try:
-    import xml.etree.cElementTree as cElementTree  # noqa
-except ImportError:
-    treeTypes['cElementTree'] = None
-else:
-    # On Python 3.3 and above cElementTree is an alias, don't run them twice.
-    if cElementTree.Element is ElementTree.Element:
-        treeTypes['cElementTree'] = None
-    else:
-        treeTypes['cElementTree'] = {
-            "builder": treebuilders.getTreeBuilder("etree", cElementTree, fullTree=True),
-            "walker": treewalkers.getTreeWalker("etree", cElementTree)
-        }
-
-try:
     import lxml.etree as lxml  # noqa
 except ImportError:
     treeTypes['lxml'] = None
