@@ -50,18 +50,6 @@ def test_all_tokens():
             assert expectedToken == outputToken
 
 
-def set_attribute_on_first_child(docfrag, name, value, treeName):
-    """naively sets an attribute on the first child of the document
-    fragment passed in"""
-    setter = {'ElementTree': lambda d: d[0].set,
-              'DOM': lambda d: d.firstChild.setAttribute}
-    setter['cElementTree'] = setter['ElementTree']
-    try:
-        setter.get(treeName, setter['DOM'])(docfrag)(name, value)
-    except AttributeError:
-        setter['ElementTree'](docfrag)(name, value)
-
-
 @pytest.mark.parametrize("tree,char", itertools.product(sorted(treeTypes.items()), ["x", "\u1234"]))
 def test_fragment_single_char(tree, char):
     expected = [

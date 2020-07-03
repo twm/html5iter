@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Parse a document to a tree, with optional profiling
 """
@@ -10,7 +10,6 @@ import traceback
 from html5lib import html5parser
 from html5lib import treebuilders, serializer, treewalkers
 from html5lib import constants
-from html5lib import _utils
 
 
 def parse():
@@ -115,7 +114,8 @@ def printOutput(parser, document, opts):
                 import lxml.etree
                 sys.stdout.write(lxml.etree.tostring(document, encoding="unicode"))
             elif tb == "etree":
-                sys.stdout.write(_utils.default_etree.tostring(document, encoding="unicode"))
+                from xml.etree import ElementTree
+                sys.stdout.write(ElementTree.tostring(document, encoding="unicode"))
         elif opts.tree:
             if not hasattr(document, '__getitem__'):
                 document = [document]

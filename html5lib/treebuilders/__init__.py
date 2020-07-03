@@ -31,8 +31,6 @@ implement several things:
 
 from __future__ import absolute_import, division, unicode_literals
 
-from .._utils import default_etree
-
 treeBuilderCache = {}
 
 
@@ -45,14 +43,12 @@ def getTreeBuilder(treeType, implementation=None, **kwargs):
         * "dom" - A generic builder for DOM implementations, defaulting to a
           xml.dom.minidom based implementation.
         * "etree" - A generic builder for tree implementations exposing an
-          ElementTree-like interface, defaulting to xml.etree.cElementTree if
-          available and xml.etree.ElementTree if not.
+          ElementTree-like interface, defaulting to `xml.etree.ElementTree`
         * "lxml" - A etree-based builder for lxml.etree, handling limitations
           of lxml's implementation.
 
     :arg implementation: (Currently applies to the "etree" and "dom" tree
         types). A module implementing the tree type e.g. xml.etree.ElementTree
-        or xml.etree.cElementTree.
 
     :arg kwargs: Any additional options to pass to the TreeBuilder when
         creating it.
@@ -80,7 +76,7 @@ def getTreeBuilder(treeType, implementation=None, **kwargs):
         elif treeType == "etree":
             from . import etree
             if implementation is None:
-                implementation = default_etree
+                from xml.etree import ElementTree as implementation
             # NEVER cache here, caching is done in the etree submodule
             return etree.getETreeModule(implementation, **kwargs).TreeBuilder
         else:
