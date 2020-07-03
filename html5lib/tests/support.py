@@ -7,6 +7,7 @@ import sys
 import codecs
 import glob
 import xml.sax.handler
+from collections import OrderedDict
 
 base_path = os.path.split(__file__)[0]
 
@@ -19,7 +20,8 @@ from html5lib import treebuilders, treewalkers, treeadapters  # noqa
 del base_path
 
 # Build a dict of available trees
-treeTypes = {}
+# It is ordered so that callers need not sort it to get stable ordering.
+treeTypes = OrderedDict()
 
 # DOM impls
 treeTypes["DOM"] = {

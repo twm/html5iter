@@ -1,6 +1,5 @@
 from __future__ import absolute_import, division, unicode_literals
 
-import itertools
 import re
 import warnings
 from difflib import unified_diff
@@ -26,21 +25,24 @@ class TreeConstructionFile(pytest.File):
     def collect(self):
         tests = TestData(str(self.fspath), "data")
         for i, test in enumerate(tests):
-            yield TreeConstructionTest(str(i), self, testdata=test)
+            yield TreeConstructionTest.from_parent(self, name=str(i), testdata=test)
 
 
 class TreeConstructionTest(pytest.Collector):
-    def __init__(self, name, parent=None, config=None, session=None, testdata=None):
-        super(TreeConstructionTest, self).__init__(name, parent, config, session)
-        self.testdata = testdata
+    @classmethod
+    def from_parent(cls, parent, *, name, testdata=None):
+        node = super().from_parent(parent, name=name)
+        node.testdata = testdata
+        return node
 
     def collect(self):
-        for treeName, treeAPIs in sorted(treeTypes.items()):
-            for x in itertools.chain(self._getParserTests(treeName, treeAPIs),
-                                     self._getTreeWalkerTests(treeName, treeAPIs)):
-                yield x
+        for treeName, treeAPIs in treeTypes.items():
+            yield from self._getParserTests(treeName, treeAPIs)
+            yield self._getTreeWalkerTest(treeName, treeAPIs)
 
     def _getParserTests(self, treeName, treeAPIs):
+        # This has the effect of skipping the genshi implementation, which
+        # lacks a parser.
         if treeAPIs is not None and "adapter" in treeAPIs:
             return
         for namespaceHTMLElements in (True, False):
@@ -48,26 +50,25 @@ class TreeConstructionTest(pytest.Collector):
                 nodeid = "%s::parser::namespaced" % treeName
             else:
                 nodeid = "%s::parser::void-namespace" % treeName
-            item = ParserTest(nodeid,
-                              self,
-                              self.testdata,
-                              treeAPIs["builder"] if treeAPIs is not None else None,
-                              namespaceHTMLElements)
+            item = ParserTest.from_parent(
+                self,
+                name=nodeid,
+                test=self.testdata,
+                treeClass=treeAPIs["builder"] if treeAPIs is not None else None,
+                namespaceHTMLElements=namespaceHTMLElements,
+            )
             item.add_marker(getattr(pytest.mark, treeName))
             item.add_marker(pytest.mark.parser)
             if namespaceHTMLElements:
                 item.add_marker(pytest.mark.namespaced)
             yield item
 
-    def _getTreeWalkerTests(self, treeName, treeAPIs):
+    def _getTreeWalkerTest(self, treeName, treeAPIs):
         nodeid = "%s::treewalker" % treeName
-        item = TreeWalkerTest(nodeid,
-                              self,
-                              self.testdata,
-                              treeAPIs)
+        item = TreeWalkerTest.from_parent(self, name=nodeid, test=self.testdata, treeAPIs=treeAPIs)
         item.add_marker(getattr(pytest.mark, treeName))
         item.add_marker(pytest.mark.treewalker)
-        yield item
+        return item
 
 
 def convertTreeDump(data):
@@ -78,11 +79,13 @@ namespaceExpected = re.compile(r"^(\s*)<(\S+)>", re.M).sub
 
 
 class ParserTest(pytest.Item):
-    def __init__(self, name, parent, test, treeClass, namespaceHTMLElements):
-        super(ParserTest, self).__init__(name, parent)
-        self.test = test
-        self.treeClass = treeClass
-        self.namespaceHTMLElements = namespaceHTMLElements
+    @classmethod
+    def from_parent(cls, parent, *, name, test, treeClass, namespaceHTMLElements):
+        node = super().from_parent(parent, name=name)
+        node.test = test
+        node.treeClass = treeClass
+        node.namespaceHTMLElements = namespaceHTMLElements
+        return node
 
     def runtest(self):
         if self.treeClass is None:
@@ -143,10 +146,12 @@ class ParserTest(pytest.Item):
 
 
 class TreeWalkerTest(pytest.Item):
-    def __init__(self, name, parent, test, treeAPIs):
-        super(TreeWalkerTest, self).__init__(name, parent)
-        self.test = test
-        self.treeAPIs = treeAPIs
+    @classmethod
+    def from_parent(cls, parent, *, name, test, treeAPIs):
+        node = super().from_parent(parent, name=name)
+        node.test = test
+        node.treeAPIs = treeAPIs
+        return node
 
     def runtest(self):
         if self.treeAPIs is None:
