@@ -1,12 +1,9 @@
-from __future__ import absolute_import, division, unicode_literals
-
 import codecs
 import json
 import warnings
 import re
 
 import pytest
-from six import unichr
 
 from html5lib._tokenizer import HTMLTokenizer
 from html5lib import constants, _utils
@@ -146,11 +143,11 @@ def unescape(test):
                 low = int(m.group(2), 16)
                 if 0xD800 <= high <= 0xDBFF and 0xDC00 <= low <= 0xDFFF:
                     cp = ((high - 0xD800) << 10) + (low - 0xDC00) + 0x10000
-                    return unichr(cp)
+                    return chr(cp)
                 else:
-                    return unichr(high) + unichr(low)
+                    return chr(high) + chr(low)
             else:
-                return unichr(int(m.group(1), 16))
+                return chr(int(m.group(1), 16))
         try:
             return _surrogateRe.sub(repl, inp)
         except ValueError:
