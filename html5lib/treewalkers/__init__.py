@@ -26,13 +26,13 @@ def getTreeWalker(treeType, implementation=None, **kwargs):
 
         * "dom": The xml.dom.minidom DOM implementation
         * "etree": A generic walker for tree implementations exposing an
-          elementtree-like interface (known to work with ElementTree,
-          cElementTree and lxml.etree).
+          elementtree-like interface (known to work with `xml.etree.ElementTree`
+          and :mod:`lxml.etree`).
         * "lxml": Optimized walker for lxml.etree
         * "genshi": a Genshi stream
 
     :arg implementation: A module implementing the tree type e.g.
-        xml.etree.ElementTree or cElementTree (Currently applies to the "etree"
+        `xml.etree.ElementTree` (currently applies to the "etree"
         tree type only).
 
     :arg kwargs: keyword arguments passed to the etree walker--for other

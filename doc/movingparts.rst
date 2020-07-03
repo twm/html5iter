@@ -16,9 +16,7 @@ The parser reads HTML by tokenizing the content and building a tree that
 the user can later access. html5lib can build three types of trees:
 
 * ``etree`` - this is the default; builds a tree based on :mod:`xml.etree`,
-  which can be found in the standard library. Whenever possible, the
-  accelerated ``ElementTree`` implementation (i.e.
-  ``xml.etree.cElementTree`` on Python 2.x) is used.
+  which can be found in the standard library.
 
 * ``dom`` - builds a tree based on :mod:`xml.dom.minidom`.
 
