@@ -1,6 +1,3 @@
-from __future__ import absolute_import, division, unicode_literals
-from six import with_metaclass, viewkeys
-
 import types
 
 from . import _inputstream
@@ -423,7 +420,7 @@ def getPhases(debug):
             return type
 
     # pylint:disable=unused-argument
-    class Phase(with_metaclass(getMetaclass(debug, log))):
+    class Phase(metaclass=getMetaclass(debug, log)):
         """Base class for helper object that implements each phase of processing
         """
         __slots__ = ("parser", "tree", "__startTagCache", "__endTagCache")
@@ -2776,7 +2773,7 @@ def getPhases(debug):
 
 
 def adjust_attributes(token, replacements):
-    needs_adjustment = viewkeys(token['data']) & viewkeys(replacements)
+    needs_adjustment = token['data'].keys() & replacements.keys()
     if needs_adjustment:
         token['data'] = type(token['data'])((replacements.get(k, k), v)
                                             for k, v in token['data'].items())

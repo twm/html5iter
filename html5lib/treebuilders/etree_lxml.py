@@ -9,17 +9,13 @@ Docypes with no name
 When any of these things occur, we emit a DataLossWarning
 """
 
-from __future__ import absolute_import, division, unicode_literals
 # pylint:disable=protected-access
 
 import warnings
 import re
 import sys
 
-try:
-    from collections.abc import MutableMapping
-except ImportError:
-    from collections import MutableMapping
+from collections.abc import MutableMapping
 
 from . import base
 from ..constants import DataLossWarning
@@ -28,7 +24,6 @@ from . import etree as etree_builders
 from .. import _ihatexml
 
 import lxml.etree as etree
-from six import PY3, binary_type
 
 
 fullTree = True
@@ -207,10 +202,7 @@ class TreeBuilder(base.TreeBuilder):
                 return name
 
             def __getitem__(self, key):
-                value = self._element._element.attrib[self._coerceKey(key)]
-                if not PY3 and isinstance(value, binary_type):
-                    value = value.decode("ascii")
-                return value
+                return self._element._element.attrib[self._coerceKey(key)]
 
             def __setitem__(self, key, value):
                 self._element._element.attrib[self._coerceKey(key)] = value
