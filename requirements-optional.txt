@@ -1,5 +1,3 @@
--r requirements.txt
-
 # We support a Genshi treewalker that can be used to serialize Genshi
 # streams.
 genshi
