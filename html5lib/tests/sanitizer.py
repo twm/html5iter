@@ -29,15 +29,14 @@ class SanitizerTest(pytest.Item):
         expected = self.test["output"]
 
         parsed = parseFragment(input)
-        with pytest.deprecated_call():
-            serialized = serialize(parsed,
-                                   sanitize=True,
-                                   omit_optional_tags=False,
-                                   use_trailing_solidus=True,
-                                   space_before_trailing_solidus=False,
-                                   quote_attr_values="always",
-                                   quote_char="'",
-                                   alphabetical_attributes=True)
+        serialized = serialize(parsed,
+                               sanitize=True,
+                               omit_optional_tags=False,
+                               use_trailing_solidus=True,
+                               space_before_trailing_solidus=False,
+                               quote_attr_values="always",
+                               quote_char="'",
+                               alphabetical_attributes=True)
         errorMsg = "\n".join(["\n\nInput:", input,
                               "\nExpected:", expected,
                               "\nReceived:", serialized])
