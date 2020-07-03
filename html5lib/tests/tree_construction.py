@@ -36,7 +36,7 @@ class TreeConstructionTest(pytest.Collector):
         return node
 
     def collect(self):
-        for treeName, treeAPIs in sorted(treeTypes.items()):
+        for treeName, treeAPIs in treeTypes.items():
             yield from self._getParserTests(treeName, treeAPIs)
             yield self._getTreeWalkerTest(treeName, treeAPIs)
 
