@@ -1,11 +1,8 @@
-from __future__ import absolute_import, division, unicode_literals
-
-from six import text_type
-from six.moves import http_client, urllib
-
 import codecs
 import re
 from io import BytesIO, StringIO
+import urllib
+import http.client as http_client
 
 import webencodings
 
@@ -131,9 +128,9 @@ def HTMLInputStream(source, **kwargs):
          isinstance(source.fp, http_client.HTTPResponse))):
         isUnicode = False
     elif hasattr(source, "read"):
-        isUnicode = isinstance(source.read(0), text_type)
+        isUnicode = isinstance(source.read(0), str)
     else:
-        isUnicode = isinstance(source, text_type)
+        isUnicode = isinstance(source, str)
 
     if isUnicode:
         encodings = [x for x in kwargs if x.endswith("_encoding")]
