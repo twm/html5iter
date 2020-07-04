@@ -1,0 +1,1 @@
+Add support for serializing the ``<ol reversed>`` boolean attribute.  The ``<ol reversed>`` and ``<ol start>`` attributes are now permitted by the sanitizer.
