@@ -9,10 +9,6 @@ Features:
 * Add support for the ``<wbr>`` element, `which indicates a line break
   opportunity <https://html.spec.whatwg.org/#the-wbr-element>`_. This element
   is allowed by default by the sanitizer. (#395) (Thank you, Tom Most!)
-* Add support for serializing the ``<ol reversed>`` boolean attribute. (Thank
-  you, Tom Most!)
-* The ``<ol reversed>`` and ``<ol start>`` attributes are now permitted by the
-  sanitizer. (#321) (Thank you, Tom Most!)
 
 1.1
 ~~~
