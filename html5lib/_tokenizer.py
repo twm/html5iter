@@ -21,16 +21,17 @@ else:
 
 
 class HTMLTokenizer(object):
-    """ This class takes care of tokenizing HTML.
+    """
+    This class takes care of tokenizing HTML.
 
-    * self.currentToken
-      Holds the token that is currently being processed.
+    :ivar currentToken:
+        Holds the token that is currently being processed.
 
-    * self.state
-      Holds a reference to the method to be invoked... XXX
+    :ivar state:
+        Holds a reference to the method to be invoked... XXX
 
-    * self.stream
-      Points to HTMLInputStream object.
+    :ivar stream:
+        Points to :class:`HTMLInputStream` object.
     """
 
     def __init__(self, stream, parser=None, **kwargs):

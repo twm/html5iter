@@ -12,8 +12,9 @@ except ImportError:
 
 from .support import treeTypes
 
-from html5lib import html5parser, treewalkers
-from html5lib.filters.lint import Filter as Lint
+from .. import html5parser, treewalkers
+from .._tokens import Characters, StartTag, EndTag
+from ..filters.lint import Filter as Lint
 
 import re
 attrlist = re.compile(r"^(\s+)\w+=.*(\n\1\w+=.*)+", re.M)
@@ -27,17 +28,17 @@ def sortattrs(x):
 
 def test_all_tokens():
     expected = [
-        {'data': {}, 'type': 'StartTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'html'},
-        {'data': {}, 'type': 'StartTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'head'},
-        {'type': 'EndTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'head'},
-        {'data': {}, 'type': 'StartTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'body'},
-        {'data': 'a', 'type': 'Characters'},
-        {'data': {}, 'type': 'StartTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'div'},
-        {'data': 'b', 'type': 'Characters'},
-        {'type': 'EndTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'div'},
-        {'data': 'c', 'type': 'Characters'},
-        {'type': 'EndTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'body'},
-        {'type': 'EndTag', 'namespace': 'http://www.w3.org/1999/xhtml', 'name': 'html'}
+        StartTag('http://www.w3.org/1999/xhtml', 'html'),
+        StartTag('http://www.w3.org/1999/xhtml', 'head'),
+        EndTag('http://www.w3.org/1999/xhtml', 'head'),
+        StartTag('http://www.w3.org/1999/xhtml', 'body'),
+        Characters('a'),
+        StartTag('http://www.w3.org/1999/xhtml', 'div'),
+        Characters('b'),
+        EndTag('http://www.w3.org/1999/xhtml', 'div'),
+        Characters('c'),
+        EndTag('http://www.w3.org/1999/xhtml', 'body'),
+        EndTag('http://www.w3.org/1999/xhtml', 'html'),
     ]
     for _, treeCls in treeTypes.items():
         if treeCls is None:
@@ -53,7 +54,7 @@ def test_all_tokens():
 @pytest.mark.parametrize("tree,char", itertools.product(sorted(treeTypes.items()), ["x", "\u1234"]))
 def test_fragment_single_char(tree, char):
     expected = [
-        {'data': char, 'type': 'Characters'}
+        Characters(data=char),
     ]
 
     treeName, treeClass = tree
@@ -71,10 +72,11 @@ def test_fragment_single_char(tree, char):
 @pytest.mark.skipif(treeTypes["lxml"] is None, reason="lxml not importable")
 def test_lxml_xml():
     expected = [
-        {'data': {}, 'name': 'div', 'namespace': None, 'type': 'StartTag'},
-        {'data': {}, 'name': 'div', 'namespace': None, 'type': 'StartTag'},
-        {'name': 'div', 'namespace': None, 'type': 'EndTag'},
-        {'name': 'div', 'namespace': None, 'type': 'EndTag'}
+        # FIXME: Why are all the namespaces None here?
+        StartTag(name="div", namespace=None, data={}),
+        StartTag(name='div', namespace=None, data={}),
+        EndTag(name='div', namespace=None),
+        EndTag(name='div', namespace=None),
     ]
 
     lxmltree = lxml.etree.fromstring('<div><div></div></div>')

@@ -1,7 +1,10 @@
 from __future__ import absolute_import, division, unicode_literals
 
+from typing import Iterator, Optional
+
 from xml.dom import Node
 from ..constants import namespaces, voidElements, spaceCharacters
+from .._tokens import Token, Doctype, Entity, Characters, SpaceCharacters, StartTag, EndTag, EmptyTag, Comment, SerializeError
 
 __all__ = ["DOCUMENT", "DOCTYPE", "TEXT", "ELEMENT", "COMMENT", "ENTITY", "UNKNOWN",
            "TreeWalker", "NonRecursiveTreeWalker"]
@@ -35,7 +38,7 @@ class TreeWalker(object):
     def __iter__(self):
         raise NotImplementedError
 
-    def error(self, msg):
+    def error(self, msg: str) -> Token:
         """Generates an error token with the given message
 
         :arg msg: the error message
@@ -43,9 +46,9 @@ class TreeWalker(object):
         :returns: SerializeError token
 
         """
-        return {"type": "SerializeError", "data": msg}
+        return SerializeError(data=msg)
 
-    def emptyTag(self, namespace, name, attrs, hasChildren=False):
+    def emptyTag(self, namespace: str, name: str, attrs, hasChildren: bool = False) -> Iterator[Token]:
         """Generates an EmptyTag token
 
         :arg namespace: the namespace of the token--can be ``None``
@@ -60,13 +63,15 @@ class TreeWalker(object):
         :returns: EmptyTag token
 
         """
-        yield {"type": "EmptyTag", "name": name,
-               "namespace": namespace,
-               "data": attrs}
+        yield EmptyTag(
+            name=name,
+            namespace=namespace,
+            data=attrs,
+        )
         if hasChildren:
             yield self.error("Void element has children")
 
-    def startTag(self, namespace, name, attrs):
+    def startTag(self, namespace: str, name: str, attrs) -> Token:
         """Generates a StartTag token
 
         :arg namespace: the namespace of the token--can be ``None``
@@ -78,12 +83,9 @@ class TreeWalker(object):
         :returns: StartTag token
 
         """
-        return {"type": "StartTag",
-                "name": name,
-                "namespace": namespace,
-                "data": attrs}
+        return StartTag(name=name, namespace=namespace, data=attrs)
 
-    def endTag(self, namespace, name):
+    def endTag(self, namespace, name) -> Token:
         """Generates an EndTag token
 
         :arg namespace: the namespace of the token--can be ``None``
@@ -93,11 +95,9 @@ class TreeWalker(object):
         :returns: EndTag token
 
         """
-        return {"type": "EndTag",
-                "name": name,
-                "namespace": namespace}
+        return EndTag(name=name, namespace=namespace)
 
-    def text(self, data):
+    def text(self, data: str) -> Iterator[Token]:
         """Generates SpaceCharacters and Characters tokens
 
         Depending on what's in the data, this generates one or more
@@ -111,11 +111,11 @@ class TreeWalker(object):
             >>> list(walker.text(''))
             []
             >>> list(walker.text('  '))
-            [{u'data': '  ', u'type': u'SpaceCharacters'}]
+            [SpaceCharacters(data='  ')]
             >>> list(walker.text(' abc '))  # doctest: +NORMALIZE_WHITESPACE
-            [{u'data': ' ', u'type': u'SpaceCharacters'},
-            {u'data': u'abc', u'type': u'Characters'},
-            {u'data': u' ', u'type': u'SpaceCharacters'}]
+            [SpaceCharacters(data=' '),
+             Characters=(data='abc'),
+             SpaceCharacters(data=' ')]
 
         :arg data: the text data
 
@@ -126,16 +126,16 @@ class TreeWalker(object):
         middle = data.lstrip(spaceCharacters)
         left = data[:len(data) - len(middle)]
         if left:
-            yield {"type": "SpaceCharacters", "data": left}
+            yield SpaceCharacters(data=left)
         data = middle
         middle = data.rstrip(spaceCharacters)
         right = data[len(middle):]
         if middle:
-            yield {"type": "Characters", "data": middle}
+            yield Characters(data=middle)
         if right:
-            yield {"type": "SpaceCharacters", "data": right}
+            yield SpaceCharacters(data=right)
 
-    def comment(self, data):
+    def comment(self, data: str) -> Token:
         """Generates a Comment token
 
         :arg data: the comment
@@ -143,9 +143,9 @@ class TreeWalker(object):
         :returns: Comment token
 
         """
-        return {"type": "Comment", "data": data}
+        return Comment(data=data)
 
-    def doctype(self, name, publicId=None, systemId=None):
+    def doctype(self, name: str, publicId: Optional[str] = None, systemId: Optional[str] = None) -> Token:
         """Generates a Doctype token
 
         :arg name:
@@ -157,12 +157,9 @@ class TreeWalker(object):
         :returns: the Doctype token
 
         """
-        return {"type": "Doctype",
-                "name": name,
-                "publicId": publicId,
-                "systemId": systemId}
+        return Doctype(name=name, publicId=publicId, systemId=systemId)
 
-    def entity(self, name):
+    def entity(self, name: str) -> Token:
         """Generates an Entity token
 
         :arg name: the entity name
@@ -170,7 +167,7 @@ class TreeWalker(object):
         :returns: an Entity token
 
         """
-        return {"type": "Entity", "name": name}
+        return Entity(name=name)
 
     def unknown(self, nodeType):
         """Handles unknown node types"""
