@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 from . import base
 from ..constants import namespaces, prefixes
+from .._tokens import Characters
 
 __all__ = ["Filter"]
 
@@ -852,25 +853,20 @@ class Filter(base.Filter):
         return token
 
     def disallowed_token(self, token):
+        # FIXME: This should use a serializer
         token_type = token["type"]
         if token_type == "EndTag":
-            token["data"] = "</%s>" % token["name"]
+            return Characters(data="</%s>" % token["name"])
         elif token["data"]:
             assert token_type in ("StartTag", "EmptyTag")
             attrs = []
             for (ns, name), v in token["data"].items():
                 attrs.append(' %s="%s"' % (name if ns is None else "%s:%s" % (prefixes[ns], name), escape(v)))
-            token["data"] = "<%s%s>" % (token["name"], ''.join(attrs))
+            if token_type == "EmptyTag":
+                attrs.append("/")
+            return Characters(data="<%s%s>" % (token["name"], ''.join(attrs)))
         else:
-            token["data"] = "<%s>" % token["name"]
-        # FIXME: Tree walkers don't generate token streams that contain the selfClosing attribute.
-        if token.get("selfClosing"):
-            token["data"] = token["data"][:-1] + "/>"
-
-        token["type"] = "Characters"
-
-        del token["name"]
-        return token
+            return Characters(data="<%s>" % token["name"])
 
     def sanitize_css(self, style):
         # disallow urls
