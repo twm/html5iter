@@ -10,6 +10,9 @@ Features:
   opportunity <https://html.spec.whatwg.org/#the-wbr-element>`_. This element
   is allowed by default by the sanitizer. (#395) (Thank you, Tom Most!)
 
+Bug fixes:
+
+* The sanitizer now permits ``<summary>`` tags.
 
 1.1
 ~~~
@@ -33,7 +36,6 @@ Other changes:
 * Try to import from ``collections.abc`` to remove DeprecationWarning and ensure
   ``html5lib`` keeps working in future Python versions. (#403)
 * Drop optional ``datrie`` dependency. (#442)
-
 
 1.0.1
 ~~~~~
