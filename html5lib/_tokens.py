@@ -1,5 +1,5 @@
 from typing import Optional, MutableMapping
-from collections import abc
+from collections import abc, OrderedDict
 
 import attr
 
@@ -37,19 +37,19 @@ class Token(abc.MutableMapping):
         return len(attr.fields(self.__class__)) + 1
 
 
-@attr.s(slots=True, kw_only=True)
+@attr.s(slots=True)
 class Doctype(Token):
     name: str = attr.ib()
-    publicId: Optional[str] = attr.ib()
-    systemId: Optional[str] = attr.ib()
+    publicId: Optional[str] = attr.ib(default=None, kw_only=True)
+    systemId: Optional[str] = attr.ib(default=None, kw_only=True)
 
 
-@attr.s(slots=True, kw_only=True)
+@attr.s(slots=True)
 class Characters(Token):
     data: str = attr.ib()
 
 
-@attr.s(slots=True, kw_only=True)
+@attr.s(slots=True)
 class SpaceCharacters(Token):
     data: str = attr.ib()
 
@@ -59,14 +59,14 @@ class Entity(Token):
     name: str = attr.ib()
 
 
-@attr.s(slots=True, kw_only=True)
+@attr.s(slots=True)
 class StartTag(Token):
     namespace: str = attr.ib()
     name: str = attr.ib()
-    data: MutableMapping = attr.ib()
+    data: MutableMapping = attr.ib(factory=OrderedDict, kw_only=True)
 
 
-@attr.s(slots=True, kw_only=True)
+@attr.s(slots=True)
 class EndTag(Token):
     namespace: str = attr.ib()
     name: str = attr.ib()
