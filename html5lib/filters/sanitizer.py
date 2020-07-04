@@ -863,6 +863,7 @@ class Filter(base.Filter):
             token["data"] = "<%s%s>" % (token["name"], ''.join(attrs))
         else:
             token["data"] = "<%s>" % token["name"]
+        # FIXME: Tree walkers don't generate token streams that contain the selfClosing attribute.
         if token.get("selfClosing"):
             token["data"] = token["data"][:-1] + "/>"
 
