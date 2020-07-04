@@ -862,8 +862,9 @@ class Filter(base.Filter):
             attrs = []
             for (ns, name), v in token["data"].items():
                 attrs.append(' %s="%s"' % (name if ns is None else "%s:%s" % (prefixes[ns], name), escape(v)))
-            if token_type == "EmptyTag":
-                attrs.append("/")
+            # FIXME: This breaks the tests:
+            # if token_type == "EmptyTag":
+            #     attrs.append("/")
             return Characters(data="<%s%s>" % (token["name"], ''.join(attrs)))
         else:
             return Characters(data="<%s>" % token["name"])
