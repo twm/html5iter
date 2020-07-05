@@ -49,7 +49,7 @@ def getDomBuilder(DomImplementation):
 
     class NodeBuilder(base.Node):
         def __init__(self, element):
-            base.Node.__init__(self, element.nodeName)
+            super().__init__(element.nodeName)
             self.element = element
 
         namespace = property(lambda self: hasattr(self.element, "namespaceURI") and
@@ -154,12 +154,12 @@ def getDomBuilder(DomImplementation):
             return self.dom
 
         def getFragment(self):
-            return base.TreeBuilder.getFragment(self).element
+            return super().getFragment().element
 
         def insertText(self, data, parent=None):
             data = data
             if parent != self:
-                base.TreeBuilder.insertText(self, data, parent)
+                super().insertText(data, parent)
             else:
                 # HACK: allow text nodes as children of the document node
                 if hasattr(self.dom, '_child_node_types'):

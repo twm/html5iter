@@ -17,7 +17,7 @@ listElementsMap = {
 }
 
 
-class Node(object):
+class Node:
     """Represents an item in the tree"""
     def __init__(self, name):
         """Creates a Node
@@ -140,7 +140,7 @@ class ActiveFormattingElements(list):
         return True
 
 
-class TreeBuilder(object):
+class TreeBuilder:
     """Base treebuilder implementation
 
     * documentClass - the class to use for the bottommost node of a document
