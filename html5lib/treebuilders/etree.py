@@ -141,7 +141,7 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
                 if self._element.text is not None:
                     newParent._element.text += self._element.text
             self._element.text = ""
-            base.Node.reparentChildren(self, newParent)
+            super().reparentChildren(newParent)
 
     class Comment(Element):
         def __init__(self, data):
@@ -331,7 +331,7 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
                     return self.document._element.find("html")
 
         def getFragment(self):
-            return base.TreeBuilder.getFragment(self)._element
+            return super().getFragment()._element
 
     return locals()
 

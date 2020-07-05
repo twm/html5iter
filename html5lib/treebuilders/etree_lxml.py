@@ -32,14 +32,14 @@ tag_regexp = re.compile("{([^}]*)}(.*)")
 comment_type = etree.Comment("asd").tag
 
 
-class DocumentType(object):
+class DocumentType:
     def __init__(self, name, publicId, systemId):
         self.name = name
         self.publicId = publicId
         self.systemId = systemId
 
 
-class Document(object):
+class Document:
     def __init__(self):
         self._elementTree = None
         self._childNodes = []
@@ -247,7 +247,7 @@ class TreeBuilder(base.TreeBuilder):
 
             def insertText(self, data, insertBefore=None):
                 data = infosetFilter.coerceCharacters(data)
-                builder.Element.insertText(self, data, insertBefore)
+                super().insertText(data, insertBefore)
 
             def cloneNode(self):
                 element = type(self)(self.name, self.namespace)
@@ -258,7 +258,7 @@ class TreeBuilder(base.TreeBuilder):
         class Comment(builder.Comment):
             def __init__(self, data):
                 data = infosetFilter.coerceComment(data)
-                builder.Comment.__init__(self, data)
+                super().__init__(data)
 
             def _setData(self, data):
                 data = infosetFilter.coerceComment(data)
@@ -272,10 +272,10 @@ class TreeBuilder(base.TreeBuilder):
         self.elementClass = Element
         self.commentClass = Comment
         # self.fragmentClass = builder.DocumentFragment
-        base.TreeBuilder.__init__(self, namespaceHTMLElements)
+        super().__init__(namespaceHTMLElements)
 
     def reset(self):
-        base.TreeBuilder.reset(self)
+        super().reset()
         self.insertComment = self.insertCommentInitial
         self.initial_comments = []
         self.doctype = None
@@ -324,7 +324,7 @@ class TreeBuilder(base.TreeBuilder):
         if (parent == self.document and
                 self.document._elementTree.getroot()[-1].tag == comment_type):
             warnings.warn("lxml cannot represent adjacent comments beyond the root elements", DataLossWarning)
-        super(TreeBuilder, self).insertComment(data, parent)
+        super().insertComment(data, parent)
 
     def insertRoot(self, token):
         # Because of the way libxml2 works, it doesn't seem to be possible to
