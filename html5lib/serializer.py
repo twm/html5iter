@@ -2,8 +2,8 @@ import re
 
 from codecs import register_error, xmlcharrefreplace_errors
 
-from .constants import voidElements, booleanAttributes, spaceCharacters
-from .constants import rcdataElements, entities, xmlEntities
+from .constants import rcdataElements, voidElements, booleanAttributes, spaceCharacters
+from .entities import entities, xmlEntities
 from . import treewalkers, _utils
 from xml.sax.saxutils import escape
 
