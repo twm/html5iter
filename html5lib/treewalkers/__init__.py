@@ -15,7 +15,7 @@ from .. import constants
 __all__ = ["getTreeWalker", "pprint"]
 
 
-def getTreeWalker(treeType, implementation=None, **kwargs):
+def getTreeWalker(treeType):
     """Get a TreeWalker class for various types of tree with built-in support
 
     :arg str treeType: the name of the tree type required (case-insensitive).
@@ -27,10 +27,6 @@ def getTreeWalker(treeType, implementation=None, **kwargs):
           and :mod:`lxml.etree`).
         * "lxml": Optimized walker for lxml.etree
         * "genshi": a Genshi stream
-
-    :arg implementation: A module implementing the tree type e.g.
-        `xml.etree.ElementTree` (currently applies to the "etree"
-        tree type only).
 
     :arg kwargs: keyword arguments passed to the etree walker--for other
         walkers, this has no effect
@@ -51,9 +47,7 @@ def getTreeWalker(treeType, implementation=None, **kwargs):
         return etree_lxml.TreeWalker
     elif treeType == "etree":
         from . import etree
-        if implementation is None:
-            from xml.etree import ElementTree as implementation
-        return etree.getETreeModule(implementation).TreeWalker
+        return etree.TreeWalker
     return None
 
 
