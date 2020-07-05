@@ -559,7 +559,6 @@ headingElements = (
 voidElements = frozenset([
     "base",
     "command",
-    "event-source",
     "link",
     "meta",
     "hr",

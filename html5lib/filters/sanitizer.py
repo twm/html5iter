@@ -49,7 +49,6 @@ allowed_elements = frozenset((
     (namespaces['html'], 'dl'),
     (namespaces['html'], 'dt'),
     (namespaces['html'], 'em'),
-    (namespaces['html'], 'event-source'),
     (namespaces['html'], 'fieldset'),
     (namespaces['html'], 'figcaption'),
     (namespaces['html'], 'figure'),
