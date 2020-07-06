@@ -75,11 +75,50 @@ def test_parse_fragment_etree():
     Parsing a fragment to to an etree produces a fragment root element that
     directly contains the given HTML.
     """
-    fragment = parseFragment("<p>...</p>", treebuilder="etree")
+    fragment = parseFragment("<p>...</p><div>...</div>", treebuilder="etree")
     assert fragment.tag == 'DOCUMENT_FRAGMENT'
-    [p] = fragment
+    [p, div] = fragment
     assert p.tag == "{http://www.w3.org/1999/xhtml}p"
     assert p.text == "..."
+    assert div.tag == "{http://www.w3.org/1999/xhtml}div"
+    assert div.text == "..."
+
+
+def test_parse_lxml():
+    """
+    Parsing a fragment to an lxml etree produces
+    a :class:`lxml.etree._ElementTree` wrapper that contains only the
+    ``<html>`` element. The doctype and comment after the document element are
+    lost.
+    """
+    doc = parse(
+        "<!DOCTYPE html><html><title>...</title><p>...</p></html><!-- ... -->",
+        treebuilder="lxml",
+    )
+    html = doc.getroot()
+    assert html.tag == "{http://www.w3.org/1999/xhtml}html"
+    [head, body] = html
+    assert head.tag == "{http://www.w3.org/1999/xhtml}head"
+    assert body.tag == "{http://www.w3.org/1999/xhtml}body"
+    [title] = head
+    assert title.tag == "{http://www.w3.org/1999/xhtml}title"
+    [p] = body
+    assert p.tag == "{http://www.w3.org/1999/xhtml}p"
+    assert p.text == "..."
+
+
+def test_parse_fragment_lxml():
+    """
+    Parsing a fragment to to an lxml etree produces a list of elements in the
+    fragment.
+    """
+    fragment = parseFragment("<p>...</p><div>...</div>", treebuilder="lxml")
+    assert isinstance(fragment, list)
+    [p, div] = fragment
+    assert p.tag == "{http://www.w3.org/1999/xhtml}p"
+    assert p.text == "..."
+    assert div.tag == "{http://www.w3.org/1999/xhtml}div"
+    assert div.text == "..."
 
 
 def test_unicode_file():
