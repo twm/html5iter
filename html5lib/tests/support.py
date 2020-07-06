@@ -32,7 +32,7 @@ treeTypes["DOM"] = {
 # ElementTree impls
 import xml.etree.ElementTree as ElementTree  # noqa
 treeTypes['ElementTree'] = {
-    "builder": treebuilders.getTreeBuilder("etree", ElementTree, fullTree=True),
+    "builder": treebuilders.getTreeBuilder("etree", ElementTree),
     "walker": treewalkers.getTreeWalker("etree")
 }
 
