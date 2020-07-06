@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import io
+from xml.etree import ElementTree
 
 from . import support  # noqa
 
@@ -41,6 +42,44 @@ def test_namespace_html_elements_0_etree():
 def test_namespace_html_elements_1_etree():
     [root] = parse("<html></html>", treebuilder="etree", namespaceHTMLElements=False)
     assert root.tag == "html"
+
+
+def test_parse_etree():
+    """
+    Parsing a fragment to an etree produces a document root element that
+    contains the document, including implied tags.
+    """
+    doc = parse(
+        "<!DOCTYPE html><html><title>...</title><p>...</p></html><!-- ... -->",
+        treebuilder="etree",
+    )
+    assert doc.tag == 'DOCUMENT_ROOT'
+    [doctype, html, comment] = doc
+    assert doctype.tag == "<!DOCTYPE>"
+    assert doctype.text == "html"
+    assert html.tag == "{http://www.w3.org/1999/xhtml}html"
+    assert comment.tag is ElementTree.Comment
+    assert comment.text == " ... "
+    [head, body] = html
+    assert head.tag == "{http://www.w3.org/1999/xhtml}head"
+    assert body.tag == "{http://www.w3.org/1999/xhtml}body"
+    [title] = head
+    assert title.tag == "{http://www.w3.org/1999/xhtml}title"
+    [p] = body
+    assert p.tag == "{http://www.w3.org/1999/xhtml}p"
+    assert p.text == "..."
+
+
+def test_parse_fragment_etree():
+    """
+    Parsing a fragment to to an etree produces a fragment root element that
+    directly contains the given HTML.
+    """
+    fragment = parseFragment("<p>...</p>", treebuilder="etree")
+    assert fragment.tag == 'DOCUMENT_FRAGMENT'
+    [p] = fragment
+    assert p.tag == "{http://www.w3.org/1999/xhtml}p"
+    assert p.text == "..."
 
 
 def test_unicode_file():
