@@ -1,0 +1,1 @@
+The etree and lxml tree builders now default to returning the full tree. This means that the `parse()` function now returns a synthetic document root element rather than the root `<html>` element.
