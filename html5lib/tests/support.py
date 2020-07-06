@@ -7,7 +7,7 @@ import sys
 import codecs
 import glob
 import xml.sax.handler
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 base_path = os.path.split(__file__)[0]
 
@@ -65,15 +65,6 @@ def get_data_files(subdirectory, files='*.dat', search_dir=test_dir):
     return sorted(glob.glob(os.path.join(search_dir, subdirectory, files)))
 
 
-class DefaultDict(dict):
-    def __init__(self, default, *args, **kwargs):
-        self.default = default
-        dict.__init__(self, *args, **kwargs)
-
-    def __getitem__(self, key):
-        return dict.get(self, key, self.default)
-
-
 class TestData(object):
     def __init__(self, filename, newTestHeading="data", encoding="utf8"):
         if encoding is None:
@@ -84,7 +75,7 @@ class TestData(object):
         self.newTestHeading = newTestHeading
 
     def __iter__(self):
-        data = DefaultDict(None)
+        data = defaultdict(type(None))
         key = None
         for line in self.f:
             heading = self.isSectionHeading(line)
@@ -93,7 +84,7 @@ class TestData(object):
                     # Remove trailing newline
                     data[key] = data[key][:-1]
                     yield self.normaliseOutput(data)
-                    data = DefaultDict(None)
+                    data = defaultdict(type(None))
                 key = heading
                 data[key] = "" if self.encoding else b""
             elif key is not None:
