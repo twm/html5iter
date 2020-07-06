@@ -12,7 +12,7 @@ from .._utils import moduleFactoryFactory
 tag_regexp = re.compile("{([^}]*)}(.*)")
 
 
-def getETreeBuilder(ElementTreeImplementation, fullTree=False):
+def getETreeBuilder(ElementTreeImplementation):
     ElementTree = ElementTreeImplementation
     ElementTreeCommentType = ElementTree.Comment("asd").tag
 
@@ -321,14 +321,7 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
             return testSerializer(element)
 
         def getDocument(self):
-            if fullTree:
-                return self.document._element
-            else:
-                if self.defaultNamespace is not None:
-                    return self.document._element.find(
-                        "{%s}html" % self.defaultNamespace)
-                else:
-                    return self.document._element.find("html")
+            return self.document._element
 
         def getFragment(self):
             return super().getFragment()._element

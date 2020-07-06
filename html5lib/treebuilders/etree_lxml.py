@@ -26,7 +26,6 @@ from .. import _ihatexml
 import lxml.etree as etree
 
 
-fullTree = True
 tag_regexp = re.compile("{([^}]*)}(.*)")
 
 comment_type = etree.Comment("asd").tag
@@ -185,8 +184,8 @@ class TreeBuilder(base.TreeBuilder):
     fragmentClass = Document
     implementation = etree
 
-    def __init__(self, namespaceHTMLElements, fullTree=False):
-        builder = etree_builders.getETreeModule(etree, fullTree=fullTree)
+    def __init__(self, namespaceHTMLElements):
+        builder = etree_builders.getETreeModule(etree)
         infosetFilter = self.infosetFilter = _ihatexml.InfosetFilter(preventDoubleDashComments=True)
         self.namespaceHTMLElements = namespaceHTMLElements
 
@@ -284,10 +283,7 @@ class TreeBuilder(base.TreeBuilder):
         return testSerializer(element)
 
     def getDocument(self):
-        if fullTree:
-            return self.document._elementTree
-        else:
-            return self.document._elementTree.getroot()
+        return self.document._elementTree
 
     def getFragment(self):
         fragment = []

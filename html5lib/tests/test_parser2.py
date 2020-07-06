@@ -34,17 +34,13 @@ def test_namespace_html_elements_1_dom():
 
 
 def test_namespace_html_elements_0_etree():
-    doc = parse("<html></html>",
-                treebuilder="etree",
-                namespaceHTMLElements=True)
-    assert doc.tag == "{%s}html" % (namespaces["html"],)
+    [root] = parse("<html></html>", treebuilder="etree", namespaceHTMLElements=True)
+    assert root.tag == "{%s}html" % (namespaces["html"],)
 
 
 def test_namespace_html_elements_1_etree():
-    doc = parse("<html></html>",
-                treebuilder="etree",
-                namespaceHTMLElements=False)
-    assert doc.tag == "html"
+    [root] = parse("<html></html>", treebuilder="etree", namespaceHTMLElements=False)
+    assert root.tag == "html"
 
 
 def test_unicode_file():
